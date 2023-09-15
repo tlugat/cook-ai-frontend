@@ -1,6 +1,6 @@
-import { useAuth } from '@hooks/useAuth';
+import { useAuth } from '@hooks/useAuth.hook';
 import { Navigate } from 'react-router-dom';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated } = useAuth();
