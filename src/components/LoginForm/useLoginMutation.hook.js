@@ -3,7 +3,7 @@ import { login } from '@api/api';
 import userKeys from '@queries/user/userKeys';
 
 const mutationFn = async (formData) => {
-    const { data } = await login(formData);
+    const data = await login(formData);
     return data;
 };
 

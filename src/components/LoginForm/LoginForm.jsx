@@ -15,7 +15,7 @@ const LoginForm = () => {
             password: '',
         },
     });
-    const { isDirty, isValid } = formState;
+    const { isDirty, isValid, errors } = formState;
     const login = useLoginMutation();
 
     const onSubmit = (data) => {
