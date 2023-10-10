@@ -3,12 +3,24 @@ import ChatBotMessage from '@components/ChatBotMessage';
 import { OPENAI_MESSAGE_ROLES } from '@utils/constants';
 import styled from 'styled-components';
 import chefIcon from '@public/icons/chef_hat.svg';
+import { useEffect, useRef } from 'react';
 
 const ChatBotMessageList = ({ messages, isTyping }) => {
+    const messagesEndRef = useRef(null);
+
     const initialChatBotAssistantMessage = {
         role: OPENAI_MESSAGE_ROLES.ASSISTANT,
         content: 'Bonjour, que puis-je faire pour vous ?',
     };
+
+    const scrollToBottom = () => {
+        if (!messagesEndRef?.current) return;
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     return (
         <Wrapper>
@@ -24,6 +36,7 @@ const ChatBotMessageList = ({ messages, isTyping }) => {
                     <DotFlashing />
                 </AssistantTypingWrapper>
             )}
+            <div ref={messagesEndRef} />
         </Wrapper>
     );
 };
