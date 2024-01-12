@@ -2,6 +2,7 @@ import ProtectedRoute from '@components/ProtectedRoute';
 import HomePage from '@pages/HomePage';
 import LoginPage from '@pages/LoginPage';
 import RegisterPage from '@pages/RegisterPage';
+import RecipePage from '@pages/RecipePage';
 
 const publicRoutes = [
     {
@@ -20,6 +21,11 @@ const privateRoutes = [
     {
         path: '/',
         element: <HomePage />,
+    },
+    {
+        path: '/recipes/:recipeId',
+        element: <RecipePage/>,
+        
     },
 ];
 
