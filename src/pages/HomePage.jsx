@@ -1,7 +1,13 @@
+import Header from "@components/Header";
+import Recipes from "@components/Recipes";
+import Searchbar from "@components/Searchbar";
+
 const HomePage = () => {
     return (
         <div>
-            <h2>Homepage</h2>
+            <Header/>
+            <Searchbar/>
+            <Recipes/>
         </div>
     );
 };
