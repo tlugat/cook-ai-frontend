@@ -1,30 +1,27 @@
 import { useState } from 'react';
 import { getSearch } from '@api/api';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+
+import placeHolder from '@public/images/placeHolder.webp';
 
 const Searchbar = () => {
     const [query, setQuery] = useState('');
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [modalOpen, setModalOpen] = useState(false);
-
+    const [searchSubmitted, setSearchSubmitted] = useState(false);
     const handleSearch = async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await getSearch(query);
-            console.log(response);
-            setRecipes(response.data || []);
-            setModalOpen(true); 
+            setRecipes(response);
+            setSearchSubmitted(true);
         } catch (err) {
             setError(err.message || 'Error occurred during search');
         }
         setLoading(false);
-    };
-
-    const closeModal = () => {
-        setModalOpen(false);
     };
 
     return (
@@ -39,106 +36,110 @@ const Searchbar = () => {
                 {loading ? 'Searching...' : 'Search'}
             </Button>
             {error && <Error>Error: {error}</Error>}
+            {searchSubmitted && <h1>Les recettes recherchées</h1>}
             <RecipeList>
                 {recipes.map((recipe, index) => (
-                    <RecipeItem key={index}>{recipe.title}</RecipeItem>
+                    <RecipeContainer key={index}>
+                        <Link to={`/recipes/${recipe.id}`}>
+                        <RecipeTitle>{recipe.title}</RecipeTitle>
+                        <RecipeImage src={placeHolder} alt="Placeholder" />
+                        <RecipeDetails>
+                            <SimpleDescription>
+                                <p>Difficulty: {recipe.difficulty}</p>
+                                <p>Duration: {recipe.duration} minutes</p>
+                            </SimpleDescription>
+                            <p>Season: {recipe.season}</p>
+                        </RecipeDetails>
+                        </Link>
+                    </RecipeContainer>
                 ))}
             </RecipeList>
-            <Modal isOpen={modalOpen}>
-                <ModalContent>
-                    <CloseButton onClick={closeModal}>&times;</CloseButton>
-                    {recipes.map((recipe, index) => (
-                        <div key={index}>
-                            <RecipeItem>{recipe.title}</RecipeItem>
-                            <p>{recipe.description}</p>
-                        </div>
-                    ))}
-                </ModalContent>
-            </Modal>
         </Container>
     );
 };
 
 const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top:4rem;
+    margin: 20px;
+    font-family: Arial, sans-serif;
 `;
 
 const Input = styled.input`
-  padding: 10px;
-  margin: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top:3rem;
+
 `;
 
 const Button = styled.button`
-  padding: 10px 20px;
-  margin: 10px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 
-  &:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 
-  &:hover {
-    background-color: #0056b3;
-  }
+    &:hover {
+        background-color: #0056b3;
+    }
 `;
 
 const Error = styled.div`
-  color: red;
-  margin: 10px;
+    color: red;
+    margin: 10px;
 `;
 
 const RecipeList = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 1rem;
 `;
 
-const RecipeItem = styled.div`
-  margin: 10px;
+const SimpleDescription = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 `;
 
-const Modal = styled.div`
-  display: ${(props) => (props.isOpen ? 'block' : 'none')};
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+const RecipeContainer = styled.div`
+    border: 1px solid #e7e7e7;
+    background-color: #E2E8F0;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    flex-basis: calc(33.33% - 20px);
+    max-width: calc(33.33% - 20px);
+    text-align: center;
+    flex-grow: 1;
+    min-width: 300px;
+    max-width: 320px;
 `;
 
-const ModalContent = styled.div`
-  background-color: white;
-  padding: 20px;
-  width:50%;
-  height:50%;
-
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+const RecipeImage = styled.img`
+    width: 100%;
+    max-height: 150px;
+    margin: 0 auto;
+    margin-bottom: 1rem;
 `;
 
-const CloseButton = styled.span`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  cursor: pointer;
+const RecipeDetails = styled.div`
+    flex: 1;
+    text-align: left;
 `;
+
+const RecipeTitle = styled.h2`
+    color: #333;
+    text-align: left;
+    margin-bottom: 1rem;
+`;
+
 export default Searchbar;
